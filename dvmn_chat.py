@@ -38,13 +38,10 @@ while True:
     try:
         response = requests.get(url, headers=headers, params=payload)
         response.raise_for_status()
-        pprint(response.json())
         if response.json()['status'] == 'found':
-            pprint('found status')
             payload = {'timestamp_to_request': response.json()['last_attempt_timestamp']}
             ParseMessages(response)
         elif response.json()['status'] == 'timeout':
-            pprint(response.json()['timestamp_to_request'])
             payload = {'timestamp_to_request': response.json()['timestamp_to_request']}
     except requests.exceptions.HTTPError as error:
         exit("Can't get data from server:\n{0}".format(error))
