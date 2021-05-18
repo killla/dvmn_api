@@ -1,6 +1,8 @@
-import os, time
-import requests, telegram
-from pprint import pprint
+import os
+import time
+
+import requests
+import telegram
 from dotenv import load_dotenv
 
 
