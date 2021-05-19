@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 
 import requests
 import telegram
@@ -35,20 +36,23 @@ def SendTgMessage(title, url, is_negative):
     bot.send_message(chat_id=TG_CHAT_ID, text=text)
     pass
 
-print('bot started')
 
-while True:
-    try:
-        response = requests.get(url, headers=headers, params=payload)
-        response.raise_for_status()
-        if response.json()['status'] == 'found':
-            payload = {'timestamp_to_request': response.json()['last_attempt_timestamp']}
-            ParseMessages(response)
-        elif response.json()['status'] == 'timeout':
-            payload = {'timestamp_to_request': response.json()['timestamp_to_request']}
-    except requests.exceptions.HTTPError as error:
-        exit("Can't get data from server:\n{0}".format(error))
-    except requests.exceptions.ReadTimeout:
-        time.sleep(5)
-    except ConnectionError:
-        time.sleep(5)
+
+if __name__ == "__main__":
+    logging.info('bot started')
+
+    while True:
+        try:
+            response = requests.get(url, headers=headers, params=payload)
+            response.raise_for_status()
+            if response.json()['status'] == 'found':
+                payload = {'timestamp_to_request': response.json()['last_attempt_timestamp']}
+                ParseMessages(response)
+            elif response.json()['status'] == 'timeout':
+                payload = {'timestamp_to_request': response.json()['timestamp_to_request']}
+        except requests.exceptions.HTTPError as error:
+            exit("Can't get data from server:\n{0}".format(error))
+        except requests.exceptions.ReadTimeout:
+            time.sleep(5)
+        except ConnectionError:
+            time.sleep(5)
