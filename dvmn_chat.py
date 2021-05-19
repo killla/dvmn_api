@@ -36,7 +36,7 @@ def SendTgMessage(title, url, is_negative):
     pass
 
 print('bot started')
-print(os.environ(['DVMN_TOKEN']))
+
 while True:
     try:
         response = requests.get(url, headers=headers, params=payload)
