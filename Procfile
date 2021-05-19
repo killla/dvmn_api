@@ -1,1 +1,1 @@
-bot: python3 название_файла.py
+bot: python3 dvmn_chat.py
