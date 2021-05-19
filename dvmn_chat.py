@@ -39,7 +39,7 @@ def SendTgMessage(title, url, is_negative):
 
 
 if __name__ == "__main__":
-    logging.info('bot started')
+    logging.warning('bot started')
 
     while True:
         try:
