@@ -10,7 +10,7 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 DVMN_TOKEN = os.getenv("DVMN_TOKEN")
 TG_CHAT_ID = os.getenv("TG_CHAT_ID")
-site = 'https://dvmn.org/'
+site = 'https://dvmn.org'
 url = 'https://dvmn.org/api/long_polling/'
 headers = {'Authorization': f'Token {DVMN_TOKEN}'}
 payload = {'timestamp_to_request': ''}
