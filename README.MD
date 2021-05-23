@@ -18,6 +18,7 @@
 - `DVMN_TOKEN` - персональный токен сайта [dvmn.org](https://dvmn.org/api/docs/)
 - `BOT_TOKEN` - токен бота Telegram
 - `TG_CHAT_ID` - идентификатор чата в Telegram
+- `LOG_LEVEL` - уровень вывода логов. Допустимые значения: DEBUG, INFO, WARNING, ERROR и CRITICAL
 
 ### Цель проекта
 

@@ -26,10 +26,10 @@ def send_tg_message(title, url, is_negative, bot, tg_chat_id, site):
 
 
 def main():
-    log_level = os.getenv("DEBUG")
-    bot_token = os.getenv("bot_token")
-    dvmn_token = os.getenv("dvmn_token")
-    tg_chat_id = os.getenv("tg_chat_id")
+    log_level = os.getenv("LOG_LEVEL")
+    bot_token = os.getenv("BOT_TOKEN")
+    dvmn_token = os.getenv("DVMN_TOKEN")
+    tg_chat_id = os.getenv("TG_CHAT_ID")
     site = 'https://dvmn.org'
     api_url = 'https://dvmn.org/api/long_polling/'
     bot = telegram.Bot(token=bot_token)
