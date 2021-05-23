@@ -27,7 +27,7 @@ def send_tg_message(title, url, is_negative):
 
 if __name__ == "__main__":
     load_dotenv()
-    DEBUG = os.getenv("DEBUG")
+    LOG_LEVEL = os.getenv("DEBUG")
     BOT_TOKEN = os.getenv("BOT_TOKEN")
     DVMN_TOKEN = os.getenv("DVMN_TOKEN")
     TG_CHAT_ID = os.getenv("TG_CHAT_ID")
@@ -35,10 +35,7 @@ if __name__ == "__main__":
     API_URL = 'https://dvmn.org/api/long_polling/'
     BOT = telegram.Bot(token=BOT_TOKEN)
 
-    level = logging.ERROR
-    if DEBUG:
-        level = logging.DEBUG
-    logging.basicConfig(level=level, format="%(asctime)s %(levelname)s %(message)s")
+    logging.basicConfig(level=LOG_LEVEL, format="%(asctime)s %(levelname)s %(message)s")
 
     logging.info('bot started')
     payload = {'timestamp_to_request': ''}
