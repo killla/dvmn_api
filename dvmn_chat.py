@@ -7,17 +7,6 @@ import telegram
 from dotenv import load_dotenv
 
 
-load_dotenv()
-DEBUG = os.getenv("DEBUG")
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-DVMN_TOKEN = os.getenv("DVMN_TOKEN")
-TG_CHAT_ID = os.getenv("TG_CHAT_ID")
-SITE = 'https://dvmn.org'
-API_URL = 'https://dvmn.org/api/long_polling/'
-headers = {'Authorization': f'Token {DVMN_TOKEN}'}
-bot = telegram.Bot(token=BOT_TOKEN)
-
-
 def parse_messages(server_response):
     messages = server_response['new_attempts']
     for message in messages:
@@ -33,10 +22,27 @@ def send_tg_message(title, url, is_negative):
         text = text + '\n\nК сожалению, в работе нашлись ошибки.'
     else:
         text = text + '\n\nПреподавателю всё понравилось.'
-    bot.send_message(chat_id=TG_CHAT_ID, text=text)
+    BOT.send_message(chat_id=TG_CHAT_ID, text=text)
 
 
-def main(payload):
+if __name__ == "__main__":
+    load_dotenv()
+    DEBUG = os.getenv("DEBUG")
+    BOT_TOKEN = os.getenv("BOT_TOKEN")
+    DVMN_TOKEN = os.getenv("DVMN_TOKEN")
+    TG_CHAT_ID = os.getenv("TG_CHAT_ID")
+    SITE = 'https://dvmn.org'
+    API_URL = 'https://dvmn.org/api/long_polling/'
+    BOT = telegram.Bot(token=BOT_TOKEN)
+
+    level = logging.ERROR
+    if DEBUG:
+        level = logging.DEBUG
+    logging.basicConfig(level=level, format="%(asctime)s %(levelname)s %(message)s")
+
+    logging.info('bot started')
+    payload = {'timestamp_to_request': ''}
+    headers = {'Authorization': f'Token {DVMN_TOKEN}'}
     while True:
         try:
             response = requests.get(API_URL, headers=headers, params=payload)
@@ -47,20 +53,7 @@ def main(payload):
                 parse_messages(server_response)
             elif server_response['status'] == 'timeout':
                 payload = {'timestamp_to_request': server_response['timestamp_to_request']}
-        except requests.exceptions.HTTPError:
-            pass
         except requests.exceptions.ReadTimeout:
             pass
         except ConnectionError:
             time.sleep(5)
-
-
-
-if __name__ == "__main__":
-    if DEBUG:
-        logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s %(message)s")
-    logging.info('bot started')
-    payload = {'timestamp_to_request': ''}
-    main(payload)
-
-
