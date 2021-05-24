@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 
 
 def send_messages(messages, bot, tg_chat_id, site):
-
     for message in messages:
         lesson_title = message['lesson_title']
         lesson_url = message['lesson_url']
@@ -41,7 +40,6 @@ def main():
 
 
     class MyLogsHandler(logging.Handler):
-
         def emit(self, record):
             log_entry = self.format(record)
             log_bot.send_message(chat_id=tg_chat_id, text=log_entry)
