@@ -28,19 +28,37 @@ def send_tg_message(title, url, is_negative, bot, tg_chat_id, site):
 def main():
     log_level = os.getenv("LOG_LEVEL")
     bot_token = os.getenv("BOT_TOKEN")
+    log_bot_token = os.getenv("LOG_BOT_TOKEN")
     dvmn_token = os.getenv("DVMN_TOKEN")
     tg_chat_id = os.getenv("TG_CHAT_ID")
     site = 'https://dvmn.org'
     api_url = 'https://dvmn.org/api/long_polling/'
     bot = telegram.Bot(token=bot_token)
+    log_bot = telegram.Bot(token=log_bot_token)
 
-    logging.basicConfig(level=log_level, format="%(asctime)s %(levelname)s %(message)s")
 
-    logging.info('bot started')
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.DEBUG)
+
+    logging.basicConfig(level=log_level) #, format="%(asctime)s %(levelname)s %(message)s")
+
+    class MyLogsHandler(logging.Handler):
+
+        def emit(self, record):
+            log_entry = self.format(record)
+            log_bot.send_message(chat_id=tg_chat_id, text=log_entry)
+
+    logger.addHandler(MyLogsHandler())
+    #logging.getLogger('telegram.bot').addHandler(MyLogsHandler())
+    #logging.getLogger('urllib3.connectionpool').addHandler(MyLogsHandler())
+
+
+    logger.info('Бот запущен')
     payload = {'timestamp_to_request': ''}
     headers = {'Authorization': f'Token {dvmn_token}'}
     while True:
         try:
+            a = 1/0
             response = requests.get(api_url, headers=headers, params=payload)
             response.raise_for_status()
             server_response = response.json()
@@ -54,6 +72,12 @@ def main():
             pass
         except ConnectionError:
             time.sleep(5)
+        except Exception as err:
+            logger.error('Бот упал с ошибкой')
+            logger.error(err, exc_info=True)
+            time.sleep(1)
+            """бот продолжает работать (пытаться запускаться), но телеграм отваливается по 
+            таймауту на отправке бесконечных сообщений с одной и той же ошибкой, введена пауза"""
 
 
 if __name__ == "__main__":
