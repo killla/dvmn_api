@@ -36,11 +36,9 @@ def main():
     bot = telegram.Bot(token=bot_token)
     log_bot = telegram.Bot(token=log_bot_token)
 
-
     logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(log_level)
 
-    logging.basicConfig(level=log_level) #, format="%(asctime)s %(levelname)s %(message)s")
 
     class MyLogsHandler(logging.Handler):
 
@@ -48,17 +46,14 @@ def main():
             log_entry = self.format(record)
             log_bot.send_message(chat_id=tg_chat_id, text=log_entry)
 
-    logger.addHandler(MyLogsHandler())
-    #logging.getLogger('telegram.bot').addHandler(MyLogsHandler())
-    #logging.getLogger('urllib3.connectionpool').addHandler(MyLogsHandler())
 
+    logger.addHandler(MyLogsHandler())
 
     logger.info('Бот запущен')
     payload = {'timestamp_to_request': ''}
     headers = {'Authorization': f'Token {dvmn_token}'}
     while True:
         try:
-            a = 1/0
             response = requests.get(api_url, headers=headers, params=payload)
             response.raise_for_status()
             server_response = response.json()
