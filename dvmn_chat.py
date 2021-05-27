@@ -7,6 +7,9 @@ import telegram
 from dotenv import load_dotenv
 
 
+logger = logging.getLogger(__name__)
+
+
 def send_messages(messages, bot, tg_chat_id, site):
     for message in messages:
         lesson_title = message['lesson_title']
@@ -25,6 +28,7 @@ def send_tg_message(title, url, is_negative, bot, tg_chat_id, site):
 
 
 def main():
+    load_dotenv()
     log_level = os.getenv("LOG_LEVEL")
     bot_token = os.getenv("BOT_TOKEN")
     log_bot_token = os.getenv("LOG_BOT_TOKEN")
@@ -35,7 +39,6 @@ def main():
     bot = telegram.Bot(token=bot_token)
     log_bot = telegram.Bot(token=log_bot_token)
 
-    logger = logging.getLogger(__name__)
     logger.setLevel(log_level)
 
 
@@ -56,24 +59,22 @@ def main():
             response.raise_for_status()
             server_response = response.json()
             if server_response['status'] == 'found':
-                payload = {'timestamp_to_request': server_response['last_attempt_timestamp']}
+                payload = {'timestamp': server_response['last_attempt_timestamp']}
                 messages = server_response['new_attempts']
                 send_messages(messages, bot, tg_chat_id, site)
             elif server_response['status'] == 'timeout':
-                payload = {'timestamp_to_request': server_response['timestamp_to_request']}
+                payload = {'timestamp': server_response['timestamp_to_request']}
         except requests.exceptions.ReadTimeout:
             pass
         except ConnectionError:
             time.sleep(5)
         except Exception as err:
-            logger.error('Бот упал с ошибкой')
-            logger.error(err, exc_info=True)
+            logger.exception('Бот упал с ошибкой')
             time.sleep(1)
             """бот продолжает работать (пытаться запускаться), но телеграм отваливается по 
             таймауту на отправке бесконечных сообщений с одной и той же ошибкой, введена пауза"""
 
 
 if __name__ == "__main__":
-    load_dotenv()
     main()
 
